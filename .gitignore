@@ -1,3 +1,25 @@
 .vercel
 .env*
 target/
+
+# Secrets and credentials: never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+service-account*.json
+keystore.properties
+
+# Environment files (real values live only here, never in git)
+.env.local
+.env.*.local
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.log
