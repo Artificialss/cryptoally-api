@@ -16,11 +16,15 @@ Historical price and catalog data for **1,864 assets** — crypto, stablecoins, 
 stocks/ETFs, commodities, and 27 international stock markets — served as a REST/JSON
 API. Built in Rust, deployed on [Vercel's official Rust runtime](https://vercel.com/docs/functions/runtimes/rust).
 
-This repository is the **public engineering reference** for the API: its real source
-(architecture, routing, auth, database access), MIT-licensed. It does not contain the
-database schema, the data-ingestion pipeline, or any proprietary data — every example
-below is a real, live response, but this repo itself ships no data. For live usage,
-current docs, and to request an API key, see **[www.cryptoally.dev](https://www.cryptoally.dev)**.
+The API and the data it serves are a **commercial, proprietary service** — not a free
+service and not open data. Access requires an API key issued to a customer.
+
+This repository is the **engineering reference** for the API: its real source
+(architecture, routing, auth, database access), with the source code MIT-licensed. It does
+not contain the database schema, the data-ingestion pipeline, or any proprietary data —
+every example below is a real, live response, but this repo itself ships no data. For
+plans, current docs, and to request an API key, see
+**[www.cryptoally.dev](https://www.cryptoally.dev)**.
 
 ## Table of contents
 
@@ -376,12 +380,19 @@ Query any of these via `/api/assets?market=<slug>` — slugs are lowercase, e.g.
 
 ## Usage & access
 
-This API and the data it serves are **open for CryptoAlly users, with attribution**.
-An API key is required for every endpoint except `/api/health`, and keys are
-currently issued on request rather than self-service.
+The CryptoAlly API and its data are a **commercial service**. They are not free, not open
+data, and not open for public use. Every endpoint except `/api/health` requires an API key
+issued to a customer, and keys are currently issued on request rather than self-service.
 
-If you display, publish, or build on data from this API, please credit
-**[Artificialss](https://artificialss.ai)**:
+**Terms of use**
+- A key belongs to the account it was issued to. Do not share it, and do not embed it in
+  public code or in an app or page that anyone can read.
+- Usage limits are set per plan and apply per key.
+- No redistribution, resale, bulk copying, scraping, or building a competing dataset from
+  the responses.
+- Abuse leads to suspension or revocation of the key.
+- If you display, publish, or build on data from this API, credit
+  **[Artificialss](https://artificialss.ai)**:
 
 ```
 Data provided by Artificialss (https://artificialss.ai)
@@ -395,9 +406,9 @@ Prefer a badge? Use this markdown:
 
 [![Powered by Artificialss](https://img.shields.io/badge/powered%20by-Artificialss-blueviolet.svg)](https://artificialss.ai)
 
-To request a key, visit **[cryptoally.app](https://cryptoally.app)**. Full, current
-usage terms live at **[www.cryptoally.dev/#usage](https://www.cryptoally.dev/#usage)**
-— that page is the source of truth, not this repository.
+Plans, pricing and the full, current terms live at
+**[www.cryptoally.dev](https://www.cryptoally.dev/#usage)**; that page is the source of
+truth, not this repository. To request a key, visit **[cryptoally.app](https://cryptoally.app)**.
 
 ## What's intentionally not here
 
@@ -408,8 +419,8 @@ configuration, or the API's homepage/UI. Those live in a separate, private repos
 ## License
 
 The source code in this repository is released under the [MIT License](LICENSE). This
-covers the code only — it does not grant any rights to the CryptoAlly data or API
-service itself; see [Usage & access](#usage--access) above for those terms.
+covers the code only. The data, the API service, and the CryptoAlly and Artificialss names
+are proprietary and all rights are reserved; see [Usage & access](#usage--access) above.
 
 ## About
 
