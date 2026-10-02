@@ -1,0 +1,178 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CryptoAlly API",
+    "description": "Historical price and catalog data for 1,864 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 27 international stock markets. Every endpoint except /api/health requires an x-api-key header.",
+    "version": "1.2.0",
+    "license": { "name": "MIT", "url": "https://github.com/Artificialss/cryptoally-api/blob/main/LICENSE" },
+    "contact": { "name": "Artificialss.ai", "url": "https://artificialss.ai", "email": "info@artificialss.ai" }
+  },
+  "servers": [
+    { "url": "https://www.cryptoally.dev", "description": "Production" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Liveness check",
+        "description": "The only public endpoint -- no API key required.",
+        "security": [],
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Service is healthy.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HealthStatus" }, "example": { "status": "ok", "database": "ok" } } }
+          }
+        }
+      }
+    },
+    "/api/assets": {
+      "get": {
+        "summary": "Screener-style asset list",
+        "description": "Filter, search, paginate, and localize the market name.",
+        "operationId": "listAssets",
+        "parameters": [
+          { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["crypto", "stablecoin", "stock", "etf", "index", "commodity"] } },
+          { "name": "market", "in": "query", "schema": { "type": "string" }, "description": "A market slug, e.g. japan, crypto, us.", "example": "crypto" },
+          { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Matches against symbol or name." },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 500 } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } },
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "es", "pt", "ja", "zh"], "default": "en" }, "description": "Localizes market_name." }
+        ],
+        "responses": {
+          "200": { "description": "Matching assets.", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Asset" } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/prices": {
+      "get": {
+        "summary": "Daily OHLCV history for one asset",
+        "description": "In the asset's native currency (see its `currency` field from /api/assets) -- no server-computed USD conversion. Resolve the asset either with `asset_id` directly, or with both `market` and `symbol`.",
+        "operationId": "getPrices",
+        "parameters": [
+          { "name": "asset_id", "in": "query", "schema": { "type": "integer" }, "description": "Direct asset id (or use market + symbol)." },
+          { "name": "market", "in": "query", "schema": { "type": "string" }, "description": "Required if using symbol." },
+          { "name": "symbol", "in": "query", "schema": { "type": "string" }, "description": "A ticker (AAPL) or crypto id (bitcoin); required if using market.", "example": "bitcoin" },
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 2000, "maximum": 10000 } }
+        ],
+        "responses": {
+          "200": { "description": "Daily OHLCV rows.", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/OhlcvRow" } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "description": "No asset matches the given id, or market+symbol pair.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/catalog": {
+      "get": {
+        "summary": "Founders, founding date, history, and official links for one asset",
+        "description": "Same asset-resolution rule as /api/prices.",
+        "operationId": "getCatalog",
+        "parameters": [
+          { "name": "asset_id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "market", "in": "query", "schema": { "type": "string" } },
+          { "name": "symbol", "in": "query", "schema": { "type": "string" } },
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "es", "pt", "ja", "zh"], "default": "en" }, "description": "founded/history are resolved to a single string in this language, falling back to English if not yet translated." }
+        ],
+        "responses": {
+          "200": { "description": "Catalog entry.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogEntry" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "description": "No asset matches the given id, or market+symbol pair.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/fx": {
+      "get": {
+        "summary": "Daily historical value of one currency against the US dollar",
+        "description": "Every value is USD per 1 unit of `currency`, normalized to this direction server-side regardless of how the underlying source quotes it.",
+        "operationId": "getFx",
+        "parameters": [
+          { "name": "currency", "in": "query", "required": true, "schema": { "type": "string", "enum": ["BRL", "CNY", "JPY", "EUR", "KRW"] } },
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 2000, "maximum": 10000 } }
+        ],
+        "responses": {
+          "200": { "description": "Daily FX rows.", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/FxRow" } } } } },
+          "400": { "description": "Unsupported currency.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "x-api-key" }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Missing or invalid API key.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" }, "example": { "error": "missing or invalid API key (x-api-key header)" } } }
+      }
+    },
+    "schemas": {
+      "ErrorResponse": { "type": "object", "properties": { "error": { "type": "string" } }, "required": ["error"] },
+      "HealthStatus": {
+        "type": "object",
+        "properties": { "status": { "type": "string", "enum": ["ok", "degraded"] }, "database": { "type": "string", "enum": ["ok", "error"] } },
+        "required": ["status", "database"]
+      },
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "symbol": { "type": "string" },
+          "name": { "type": "string" },
+          "asset_type": { "type": "string", "enum": ["crypto", "stablecoin", "stock", "etf", "index", "commodity"] },
+          "currency": { "type": "string", "example": "USD" },
+          "market": { "type": "string" },
+          "market_name": { "type": "string", "description": "Localized per the lang parameter." },
+          "index_name": { "type": "string", "nullable": true }
+        },
+        "required": ["id", "symbol", "name", "asset_type", "currency", "market", "market_name", "index_name"]
+      },
+      "OhlcvRow": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "open": { "type": "string", "description": "Decimal, as a string to preserve precision." },
+          "high": { "type": "string" },
+          "low": { "type": "string" },
+          "close": { "type": "string" },
+          "volume": { "type": "integer" }
+        },
+        "required": ["date", "open", "high", "low", "close", "volume"]
+      },
+      "CatalogEntry": {
+        "type": "object",
+        "properties": {
+          "asset_id": { "type": "integer" },
+          "founders": { "type": "array", "items": { "type": "string" } },
+          "founded": { "type": "string", "nullable": true },
+          "history": { "type": "string", "nullable": true },
+          "official_website": { "type": "string", "nullable": true },
+          "logo_url": { "type": "string", "nullable": true },
+          "info_url": { "type": "string", "nullable": true },
+          "issuer": { "type": "string", "nullable": true },
+          "index_provider": { "type": "string", "nullable": true },
+          "inception_date": { "type": "string", "format": "date", "nullable": true }
+        },
+        "required": ["asset_id", "founders", "founded", "history", "official_website", "logo_url", "info_url", "issuer", "index_provider", "inception_date"]
+      },
+      "FxRow": {
+        "type": "object",
+        "description": "Same shape as OhlcvRow minus volume (FX has no trading volume).",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "open": { "type": "string" },
+          "high": { "type": "string" },
+          "low": { "type": "string" },
+          "close": { "type": "string" }
+        },
+        "required": ["date", "open", "high", "low", "close"]
+      }
+    }
+  }
+}

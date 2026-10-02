@@ -1,0 +1,23 @@
+# CryptoAlly API
+
+> Historical price and catalog data for 1,864 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 27 international stock markets -- served as a REST/JSON API. Built in Rust, deployed on Vercel's official Rust runtime.
+
+Every endpoint except `/api/health` requires an `x-api-key` header. Keys are opaque, random tokens; only their SHA-256 hash is stored server-side.
+
+Full machine-readable API reference: [OpenAPI spec](https://www.cryptoally.dev/openapi.json)
+
+## Endpoints
+
+- `GET /api/health` -- Public, no key. Liveness + database check.
+- `GET /api/assets?type=&market=&search=&limit=&offset=&lang=` -- Screener-style asset list: filter, search, paginate, localize market names.
+- `GET /api/prices?asset_id=|market=&symbol=&from=&to=&limit=` -- Daily OHLCV history for one asset, in its native currency.
+- `GET /api/catalog?asset_id=|market=&symbol=&lang=` -- Founders, founding date, history, and official links for one asset.
+- `GET /api/fx?currency=&from=&to=&limit=` -- Daily historical value of one currency (BRL, CNY, JPY, EUR, KRW) against the US dollar.
+
+Standard status codes: `200` success, `400` malformed request, `401` missing/invalid key, `404` no such asset/entry, `500`/`503` server- or database-side failure.
+
+## About
+
+This repository ([cryptoally-api](https://github.com/Artificialss/cryptoally-api)) is the public engineering reference for the API -- real source (architecture, routing, auth, database access), MIT-licensed. It ships no data or schema. For live usage, current docs, and to request an API key, see [www.cryptoally.dev](https://www.cryptoally.dev).
+
+Built by [Artificialss](https://artificialss.ai/) -- Software & AI Ethical Labs, Turrialba, Costa Rica. Contact: info@artificialss.ai
