@@ -12,8 +12,8 @@
   <a href="https://www.cryptoally.dev"><img alt="API status" src="https://img.shields.io/badge/api-www.cryptoally.dev-informational.svg"></a>
 </p>
 
-Historical price and catalog data for **1,864 assets** — crypto, stablecoins, US
-stocks/ETFs, commodities, and 27 international stock markets — served as a REST/JSON
+Historical price and catalog data for **2,294 assets** — crypto, stablecoins, US
+stocks/ETFs, commodities, and 38 international stock markets — served as a REST/JSON
 API. Built in Rust, deployed on [Vercel's official Rust runtime](https://vercel.com/docs/functions/runtimes/rust).
 
 The API and the data it serves are a **commercial, proprietary service** — not a free
@@ -127,7 +127,7 @@ Screener-style asset list — filter, search, paginate, and localize the market 
 | `search` | string | Matches against symbol or name |
 | `limit` | int | Default `50`, max `500` |
 | `offset` | int | Default `0` |
-| `lang` | string | `en` (default) \| `es` \| `pt` \| `ja` \| `zh` — localizes `market_name` |
+| `lang` | string | `en` (default) \| `es` \| `pt` \| `ja` \| `zh` \| `ar` \| `tr` \| `ko` \| `vi` \| `ru` — localizes `market_name` |
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
@@ -163,7 +163,7 @@ curl -H "x-api-key: YOUR_KEY" \
 
 Daily OHLCV history for one asset, in its native currency (see the asset's `currency`
 field from `/api/assets`) — there's no server-computed USD field, since for USD-native
-assets that'd just duplicate `close`, and for the ~1,600 non-USD assets it'd be a
+assets that'd just duplicate `close`, and for the ~2,000 non-USD assets it'd be a
 redundant FX-converted copy of every row with no server-side reader. Converting to USD
 or any other currency is left to the client. Resolve the asset either with `asset_id`
 directly, or with both `market` and `symbol` — a ticker alone isn't unique across
@@ -224,7 +224,7 @@ asset-resolution rule as `/api/prices` (`asset_id`, or `market` + `symbol`).
 |---|---|---|
 | `asset_id` | int | Direct asset id *(or use `market` + `symbol`)* |
 | `market` / `symbol` | string | Same pairing rule as `/api/prices` |
-| `lang` | string | `en` (default) \| `es` \| `pt` \| `ja` \| `zh` |
+| `lang` | string | `en` (default) \| `es` \| `pt` \| `ja` \| `zh` \| `ar` \| `tr` \| `ko` \| `vi` \| `ru` |
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
@@ -302,36 +302,41 @@ currency's data means the same thing.
 
 ## Markets covered
 
-1,864 assets across 36 markets — 27 international stock exchanges, US equities/ETFs,
+2,294 assets across 41 markets — 38 international stock exchanges, US equities/ETFs,
 crypto, and commodities:
 
 | Market | Assets |
 |---|---:|
 | Japan | 225 |
+| India | 200 |
 | South Korea | 200 |
 | Australia | 196 |
 | United States | 182 |
+| Turkey | 100 |
 | United Kingdom | 100 |
 | Brazil | 90 |
 | Crypto | 62 |
 | United Arab Emirates | 61 |
-| Saudi Arabia | 60 |
 | Canada | 60 |
-| India | 50 |
-| Taiwan | 50 |
-| Colombia | 50 |
+| Saudi Arabia | 60 |
 | China | 50 |
+| Colombia | 50 |
+| Kuwait | 50 |
+| Qatar | 50 |
+| Russia | 50 |
+| Taiwan | 50 |
 | New Zealand | 48 |
 | Peru | 43 |
 | South Africa | 33 |
 | Mexico | 32 |
 | Chile | 31 |
 | Singapore | 30 |
+| Vietnam | 30 |
 | Egypt | 27 |
-| Poland | 20 |
 | Austria | 20 |
-| Switzerland | 20 |
 | Hungary | 20 |
+| Poland | 20 |
+| Switzerland | 20 |
 | Argentina | 19 |
 | Germany | 17 |
 | Portugal | 17 |
@@ -343,7 +348,7 @@ crypto, and commodities:
 | Spain | 4 |
 | Belgium | 2 |
 | Finland | 1 |
-| **Total** | **1,864** |
+| **Total** | **2,294** |
 
 Query any of these via `/api/assets?market=<slug>` — slugs are lowercase, e.g. `japan`,
 `south_korea`, `uae`, `crypto`.
