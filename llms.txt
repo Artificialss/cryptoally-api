@@ -1,6 +1,6 @@
 # CryptoAlly API
 
-> Historical price and catalog data for 1,864 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 27 international stock markets -- served as a REST/JSON API. Built in Rust, deployed on Vercel's official Rust runtime.
+> Historical price and catalog data for 2,294 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 38 international stock markets -- served as a REST/JSON API. Built in Rust, deployed on Vercel's official Rust runtime.
 
 Every endpoint except `/api/health` requires an `x-api-key` header. Keys are opaque, random tokens; only their SHA-256 hash is stored server-side.
 

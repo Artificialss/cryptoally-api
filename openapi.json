@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "CryptoAlly API",
-    "description": "Historical price and catalog data for 1,864 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 27 international stock markets. Every endpoint except /api/health requires an x-api-key header.",
+    "description": "Historical price and catalog data for 2,294 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 38 international stock markets. Every endpoint except /api/health requires an x-api-key header.",
     "version": "1.2.0",
     "license": { "name": "MIT", "url": "https://github.com/Artificialss/cryptoally-api/blob/main/LICENSE" },
     "contact": { "name": "Artificialss.ai", "url": "https://artificialss.ai", "email": "info@artificialss.ai" }
@@ -37,7 +37,7 @@
           { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Matches against symbol or name." },
           { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 500 } },
           { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } },
-          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "es", "pt", "ja", "zh"], "default": "en" }, "description": "Localizes market_name." }
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "es", "pt", "ja", "zh", "ar", "tr", "ko", "vi", "ru"], "default": "en" }, "description": "Localizes market_name." }
         ],
         "responses": {
           "200": { "description": "Matching assets.", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Asset" } } } } },
@@ -74,7 +74,7 @@
           { "name": "asset_id", "in": "query", "schema": { "type": "integer" } },
           { "name": "market", "in": "query", "schema": { "type": "string" } },
           { "name": "symbol", "in": "query", "schema": { "type": "string" } },
-          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "es", "pt", "ja", "zh"], "default": "en" }, "description": "founded/history are resolved to a single string in this language, falling back to English if not yet translated." }
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "es", "pt", "ja", "zh", "ar", "tr", "ko", "vi", "ru"], "default": "en" }, "description": "founded/history are resolved to a single string in this language, falling back to English if not yet translated." }
         ],
         "responses": {
           "200": { "description": "Catalog entry.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogEntry" } } } },

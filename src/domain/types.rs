@@ -44,9 +44,30 @@ pub enum Lang {
     Pt,
     Ja,
     Zh,
+    Ar,
+    Tr,
+    Ko,
+    Vi,
+    Ru,
 }
 
 impl Lang {
+    /// Every supported language, source language first. Kept in sync with the `languages`
+    /// table (migration 0009 + the 2026-09-25 expansion) and the homepage dictionary by
+    /// `tests/i18n_consistency.rs`.
+    pub const ALL: [Lang; 10] = [
+        Lang::En,
+        Lang::Es,
+        Lang::Pt,
+        Lang::Ja,
+        Lang::Zh,
+        Lang::Ar,
+        Lang::Tr,
+        Lang::Ko,
+        Lang::Vi,
+        Lang::Ru,
+    ];
+
     pub fn code(self) -> &'static str {
         match self {
             Lang::En => "en",
@@ -54,6 +75,20 @@ impl Lang {
             Lang::Pt => "pt",
             Lang::Ja => "ja",
             Lang::Zh => "zh",
+            Lang::Ar => "ar",
+            Lang::Tr => "tr",
+            Lang::Ko => "ko",
+            Lang::Vi => "vi",
+            Lang::Ru => "ru",
+        }
+    }
+
+    /// True for a language written right-to-left. Only Arabic today, but kept as a real
+    /// match (not `self == Lang::Ar`) so a future RTL addition can't be missed silently.
+    pub fn is_rtl(self) -> bool {
+        match self {
+            Lang::Ar => true,
+            Lang::En | Lang::Es | Lang::Pt | Lang::Ja | Lang::Zh | Lang::Tr | Lang::Ko | Lang::Vi | Lang::Ru => false,
         }
     }
 
@@ -65,6 +100,11 @@ impl Lang {
             Some("pt") => Lang::Pt,
             Some("ja") => Lang::Ja,
             Some("zh") => Lang::Zh,
+            Some("ar") => Lang::Ar,
+            Some("tr") => Lang::Tr,
+            Some("ko") => Lang::Ko,
+            Some("vi") => Lang::Vi,
+            Some("ru") => Lang::Ru,
             _ => Lang::En,
         }
     }
@@ -160,6 +200,18 @@ mod tests {
         assert_eq!(Lang::parse_or_default(Some("pt")).code(), "pt");
         assert_eq!(Lang::parse_or_default(Some("ja")).code(), "ja");
         assert_eq!(Lang::parse_or_default(Some("zh")).code(), "zh");
+        assert_eq!(Lang::parse_or_default(Some("ar")).code(), "ar");
+        assert_eq!(Lang::parse_or_default(Some("tr")).code(), "tr");
+        assert_eq!(Lang::parse_or_default(Some("ko")).code(), "ko");
+        assert_eq!(Lang::parse_or_default(Some("vi")).code(), "vi");
+        assert_eq!(Lang::parse_or_default(Some("ru")).code(), "ru");
+    }
+
+    #[test]
+    fn only_arabic_is_rtl() {
+        for lang in Lang::ALL {
+            assert_eq!(lang.is_rtl(), lang == Lang::Ar, "{} RTL flag is wrong", lang.code());
+        }
     }
 
     #[test]
