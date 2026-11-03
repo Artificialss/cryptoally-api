@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "CryptoAlly API",
-    "description": "Historical price and catalog data for 2,294 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 38 international stock markets. Every endpoint except /api/health requires an x-api-key header.",
-    "version": "1.2.0",
+    "description": "Historical price and catalog data for 2,344 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 39 international stock markets. Every endpoint except /api/health requires an x-api-key header.",
+    "version": "1.3.0",
     "license": { "name": "MIT", "url": "https://github.com/Artificialss/cryptoally-api/blob/main/LICENSE" },
     "contact": { "name": "Artificialss.ai", "url": "https://artificialss.ai", "email": "info@artificialss.ai" }
   },
@@ -41,6 +41,32 @@
         ],
         "responses": {
           "200": { "description": "Matching assets.", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Asset" } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/markets": {
+      "get": {
+        "summary": "Market list with counts",
+        "description": "Every market with at least one active asset, with its localized name, exchange, currency, country code, active-asset count, distinct asset types and the date of its latest daily price. Ordered by asset_count, descending. Cacheable for 5 minutes (cache-control: public, max-age=300).",
+        "operationId": "listMarkets",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["en", "es", "pt", "ja", "zh", "ar", "tr", "ko", "vi", "ru"], "default": "en" },
+            "description": "Localizes name. Unsupported codes fall back to en; a missing translation falls back to the English name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Markets, largest first.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Market" } }
+              }
+            }
+          },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -132,6 +158,20 @@
           "index_name": { "type": "string", "nullable": true }
         },
         "required": ["id", "symbol", "name", "asset_type", "currency", "market", "market_name", "index_name"]
+      },
+      "Market": {
+        "type": "object",
+        "properties": {
+          "slug": { "type": "string", "example": "china_star50", "description": "Use as the market parameter of /api/assets and /api/prices." },
+          "name": { "type": "string", "nullable": true, "description": "Localized per the lang parameter." },
+          "exchange": { "type": "string", "nullable": true, "example": "Shanghai Stock Exchange (STAR Market)" },
+          "currency": { "type": "string", "nullable": true, "example": "CNY" },
+          "country_code": { "type": "string", "nullable": true, "example": "CN" },
+          "asset_count": { "type": "integer", "example": 50 },
+          "asset_types": { "type": "array", "items": { "type": "string" }, "example": ["stock"] },
+          "latest_date": { "type": "string", "format": "date", "nullable": true, "description": "Newest daily-price date across the market's active assets." }
+        },
+        "required": ["slug", "asset_count", "asset_types"]
       },
       "OhlcvRow": {
         "type": "object",
