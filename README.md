@@ -5,15 +5,15 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/Artificialss/cryptoally-api/releases"><img alt="Release" src="https://img.shields.io/badge/release-v1.2.0-blueviolet.svg"></a>
+  <a href="https://github.com/Artificialss/cryptoally-api/releases"><img alt="Release" src="https://img.shields.io/badge/release-v1.3.0-blueviolet.svg"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="Rust" src="https://img.shields.io/badge/rust-2021-orange.svg">
   <img alt="Status" src="https://img.shields.io/badge/status-live-brightgreen.svg">
   <a href="https://www.cryptoally.dev"><img alt="API status" src="https://img.shields.io/badge/api-www.cryptoally.dev-informational.svg"></a>
 </p>
 
-Historical price and catalog data for **2,294 assets** — crypto, stablecoins, US
-stocks/ETFs, commodities, and 38 international stock markets — served as a REST/JSON
+Historical price and catalog data for **2,344 assets** — crypto, stablecoins, US
+stocks/ETFs, commodities, and 39 international stock markets — served as a REST/JSON
 API. Built in Rust, deployed on [Vercel's official Rust runtime](https://vercel.com/docs/functions/runtimes/rust).
 
 The API and the data it serves are a **commercial, proprietary service** — not a free
@@ -33,6 +33,7 @@ plans, current docs, and to request an API key, see
 - [Endpoints](#endpoints)
   - [`GET /api/health`](#get-apihealth)
   - [`GET /api/assets`](#get-apiassets)
+  - [`GET /api/markets`](#get-apimarkets)
   - [`GET /api/prices`](#get-apiprices)
   - [`GET /api/catalog`](#get-apicatalog)
   - [`GET /api/fx`](#get-apifx)
@@ -158,6 +159,62 @@ curl -H "x-api-key: YOUR_KEY" \
   }
 ]
 ```
+
+### `GET /api/markets`
+
+Every market with its localized name and live aggregates — use it to build a market
+picker instead of hard-coding slugs. Ordered by `asset_count`, largest first. Responses
+are cacheable for 5 minutes (`cache-control: public, max-age=300`).
+
+| Param | Type | Description |
+|---|---|---|
+| `lang` | string | `en` (default) \| `es` \| `pt` \| `ja` \| `zh` \| `ar` \| `tr` \| `ko` \| `vi` \| `ru` — localizes `name`. Unsupported codes fall back to English; so does a missing translation |
+
+```bash
+curl -H "x-api-key: YOUR_KEY" \
+  "https://www.cryptoally.dev/api/markets?lang=en"
+```
+
+```json
+[
+  {
+    "slug": "japan",
+    "name": "Japan",
+    "exchange": "Tokyo Stock Exchange",
+    "currency": "JPY",
+    "country_code": "JP",
+    "asset_count": 225,
+    "asset_types": [
+      "stock"
+    ],
+    "latest_date": "2026-11-02"
+  },
+  {
+    "slug": "china_star50",
+    "name": "China STAR 50",
+    "exchange": "Shanghai Stock Exchange (STAR Market)",
+    "currency": "CNY",
+    "country_code": "CN",
+    "asset_count": 50,
+    "asset_types": [
+      "stock"
+    ],
+    "latest_date": "2026-11-02"
+  }
+]
+```
+
+| Field | Description |
+|---|---|
+| `slug` | The market slug — pass it as `market` to `/api/assets` and `/api/prices` |
+| `name` | Localized market name (may be `null`) |
+| `exchange`, `currency`, `country_code` | Exchange name, trading currency and ISO country code. Each can be `null` where it doesn't apply (`exchange` for `crypto`, `commodities` and the aggregate `us` market; `country_code` for `crypto` and `commodities`) |
+| `asset_count` | Active assets in the market |
+| `asset_types` | Distinct asset types in the market, sorted |
+| `latest_date` | Newest daily-price date across the market's active assets (`null` if none) |
+
+Only markets with at least one active asset are listed. A market whose data source has
+stalled keeps its own older `latest_date`, so you can tell fresh markets from stale ones.
 
 ### `GET /api/prices`
 
@@ -302,8 +359,8 @@ currency's data means the same thing.
 
 ## Markets covered
 
-2,294 assets across 41 markets — 38 international stock exchanges, US equities/ETFs,
-crypto, and commodities:
+2,344 assets across 42 markets — 39 international stock exchanges, US equities/ETFs,
+crypto, and commodities (prices through 2026-11-02):
 
 | Market | Assets |
 |---|---:|
@@ -320,6 +377,7 @@ crypto, and commodities:
 | Canada | 60 |
 | Saudi Arabia | 60 |
 | China | 50 |
+| China STAR 50 | 50 |
 | Colombia | 50 |
 | Kuwait | 50 |
 | Qatar | 50 |
@@ -348,10 +406,11 @@ crypto, and commodities:
 | Spain | 4 |
 | Belgium | 2 |
 | Finland | 1 |
-| **Total** | **2,294** |
+| **Total** | **2,344** |
 
 Query any of these via `/api/assets?market=<slug>` — slugs are lowercase, e.g. `japan`,
-`south_korea`, `uae`, `crypto`.
+`south_korea`, `uae`, `crypto`, `china_star50`. List them all, with counts and the latest
+price date, via [`GET /api/markets`](#get-apimarkets).
 
 ## Architecture
 

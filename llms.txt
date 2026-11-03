@@ -1,6 +1,6 @@
 # CryptoAlly API
 
-> Historical price and catalog data for 2,294 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 38 international stock markets -- served as a REST/JSON API. Built in Rust, deployed on Vercel's official Rust runtime.
+> Historical price and catalog data for 2,344 assets -- crypto, stablecoins, US stocks/ETFs, commodities, and 39 international stock markets -- served as a REST/JSON API. Built in Rust, deployed on Vercel's official Rust runtime.
 
 Every endpoint except `/api/health` requires an `x-api-key` header. Keys are opaque, random tokens; only their SHA-256 hash is stored server-side.
 
@@ -10,6 +10,7 @@ Full machine-readable API reference: [OpenAPI spec](https://www.cryptoally.dev/o
 
 - `GET /api/health` -- Public, no key. Liveness + database check.
 - `GET /api/assets?type=&market=&search=&limit=&offset=&lang=` -- Screener-style asset list: filter, search, paginate, localize market names.
+- `GET /api/markets?lang=` -- Market list with localized names, exchange, currency, country code, asset counts, asset types and latest price date. Cacheable for 5 minutes.
 - `GET /api/prices?asset_id=|market=&symbol=&from=&to=&limit=` -- Daily OHLCV history for one asset, in its native currency.
 - `GET /api/catalog?asset_id=|market=&symbol=&lang=` -- Founders, founding date, history, and official links for one asset.
 - `GET /api/fx?currency=&from=&to=&limit=` -- Daily historical value of one currency (BRL, CNY, JPY, EUR, KRW) against the US dollar.
