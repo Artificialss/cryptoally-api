@@ -472,7 +472,7 @@ Prefer a badge? Use this markdown:
 
 Plans, pricing and the full, current terms live at
 **[www.cryptoally.dev](https://www.cryptoally.dev/#usage)**; that page is the source of
-truth, not this repository. To request a key, visit **[cryptoally.app](https://cryptoally.app)**.
+truth, not this repository. To request a key, visit **[cryptoally.io](https://www.cryptoally.io)**.
 
 ## What's intentionally not here
 
@@ -491,7 +491,7 @@ are proprietary and all rights are reserved; see [Usage & access](#usage--access
 CryptoAlly is built by **[Artificialss](https://artificialss.ai)**. This repository is
 the public engineering reference for the API; the product itself — screeners, charts,
 and the rest of the CryptoAlly experience — lives at
-**[cryptoally.app](https://cryptoally.app)**, with the live API and its full docs at
+**[cryptoally.io](https://www.cryptoally.io)**, with the live API and its full docs at
 **[www.cryptoally.dev](https://www.cryptoally.dev)**.
 
 Under the hood: a Postgres database (hosted on [Neon](https://neon.tech), Vercel's
