@@ -23,3 +23,19 @@ keystore.properties
 Thumbs.db
 *.swp
 *.log
+
+# AI-assistant files: private notes, memory and local permissions never belong in a public repo
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+GEMINI.md
+MEMORY.md
+.claude/
+.cursor/
+.cursorrules
+.aider*
+.mcp.json
+.codex/
+.windsurf/
+.continue/
+copilot-instructions.md
